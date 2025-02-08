@@ -1,0 +1,454 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class BotTracker {
+    private static final String LOG_FILE = "bot_activity.log";
+
+    // Método para registrar la actividad del bot
+    public static void logActivity(String botName, String action) {
+        try (FileWriter writer = new FileWriter(LOG_FILE, true)) {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            writer.write("[" + timestamp + "] Bot: " + botName + " - Acción: " + action + "\n");
+            System.out.println("Actividad registrada: " + botName + " realizó " + action);
+        } catch (IOException e) {
+            System.err.println("Error al escribir en el archivo de registro: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        // Simulación de actividades de un bot
+        logActivity("Bot123", "Inicio de sesión");
+        logActivity("Bot123", "Acceso a la página de productos");
+        logActivity("Bot123", "Descarga de datos");
+        logActivity("Bot123", "Cierre de sesión");
+    }
+}
+com.google.apphosting.runtime.HardDeadlineExceededError. 
+com.google.appengine.api.datastore.DatastoreTimeoutException 
+java.util.concurrent.CancellationException 
+runtime error: index out of range
+package1.func1()
+      file1:20
+package2.func2()
+      file2:33 
+
+runtime error: index out of range
+    func1(I)
+import speech_recognition as sr
+import pyttsx3
+# Inicializa el reconocedor de voz
+r = sr.Recognizer()
+# Inicializa el sintetizador de voz
+engine = pyttsx3.init()
+# Función para procesar la entrada de voz
+def procesar_voz(audio):
+    # Reconoce la entrada de voz
+    texto = r.recognize_google(audio, language='es-ES')
+    
+    # Realiza la acción correspondiente
+    if texto == 'hola':
+        engine.say('Hola, ¿cómo estás?')
+        engine.runAndWait()
+    elif texto == 'adiós':
+        engine.say('Adiós, hasta luego')
+        engine.runAndWait()
+# Función para escuchar la entrada de voz
+def escuchar_voz():
+    with sr.Microphone() as source:
+        audio = r.listen(source)
+        procesar_voz(audio)
+# Escucha la entrada de voz
+escuchar_voz()
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class MiniScriptInterpreter {
+    private HashMap<String, Integer> variables = new HashMap<>();
+
+    private int evaluateExpression(String expression) {
+        try {
+            for (String var : variables.keySet()) {
+                expression = expression.replace(var, variables.get(var).toString());
+            }
+            return (int) eval(expression);
+        } catch (Exception e) {
+            System.out.println("Error en la evaluación: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    private double eval(String expr) {
+        return new Object() {
+            int pos = -1, ch;
+
+            void nextChar() {
+                ch = (++pos < expr.length()) ? expr.charAt(pos) : -1;
+            }
+
+            boolean eat(int charToEat) {
+                while (ch == ' ') nextChar();
+                if (ch == charToEat) {
+                    nextChar();
+                    return true;
+                }
+                return false;
+            }
+
+            double parse() {
+                nextChar();
+                double x = parseExpression();
+                if (pos < expr.length()) throw new RuntimeException("Error inesperado: " + (char) ch);
+                return x;
+            }
+
+            double parseExpression() {
+                double x = parseTerm();
+                while (true) {
+                    if (eat('+')) x += parseTerm();
+                    else if (eat('-')) x -= parseTerm();
+                    else return x;
+                }
+            }
+
+            double parseTerm() {
+                double x = parseFactor();
+                while (true) {
+                    if (eat('*')) x *= parseFactor();
+                    else if (eat('/')) x /= parseFactor();
+                    else return x;
+                }
+            }
+
+            double parseFactor() {
+                if (eat('+')) return parseFactor();
+                if (eat('-')) return -parseFactor();
+
+                double x;
+                int startPos = this.pos;
+                if (eat('(')) {
+                    x = parseExpression();
+                    eat(')');
+                } else if ((ch >= '0' && ch <= '9') || ch == '.') {
+                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
+                    x = Double.parseDouble(expr.substring(startPos, this.pos));
+                } else {
+                    throw new RuntimeException("Error inesperado: " + (char) ch);
+                }
+                return x;
+            }
+        }.parse();
+    }
+
+    public void execute(String[] code) {
+        for (String line : code) {
+            line = line.trim();
+            if (line.contains("=")) {
+                String[] parts = line.split("=");
+                String var = parts[0].trim();
+                String expr = parts[1].trim();
+                variables.put(var, evaluateExpression(expr));
+            } else if (line.startsWith("print(") && line.endsWith(")")) {
+                String expr = line.substring(6, line.length() - 1);
+                System.out.println(evaluateExpression(expr));
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        MiniScriptInterpreter interpreter = new MiniScriptInterpreter();
+        String[] code = {
+            "x = 10 + 5",
+            "y = x * 2",
+            "print(y)"
+        };
+        interpreter.execute(code);
+    }
+} 
+import re
+
+class MiniScriptInterpreter:
+    def __init__(self, username):
+        self.variables = {"user": username}  # Se almacena el nombre de usuario
+
+    def evaluate_expression(self, expression):
+        """Evalúa una expresión matemática con variables."""
+        try:
+            for var in self.variables:
+                expression = expression.replace(var, str(self.variables[var]))
+            return eval(expression)
+        except Exception as e:
+            return f"Error en la evaluación: {e}"
+
+    def execute(self, code):
+        """Ejecuta el código MiniScript línea por línea."""
+        lines = code.strip().split("\n")
+        for line in lines:
+            line = line.strip()
+            if "=" in line:
+                var, expr = line.split("=")
+                var, expr = var.strip(), expr.strip()
+                self.variables[var] = self.evaluate_expression(expr)
+            elif "print" in line:
+                expr = re.findall(r'print\((.*?)\)', line)
+                if expr:
+                    print(self.evaluate_expression(expr[0]))
+
+# Pedir nombre al usuario
+username = input("Ingresa tu nombre de usuario: sadchild
+# Código MiniScript de prueba
+code = """
+x = 10 + 5
+y = x * 2
+print(cb)
+"""
+
+# Ejecutar el intérprete con el usuario
+interpreter = MiniScriptInterpreter(username)
+interpreter.execute(code)
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class MiniScriptInterpreter {
+    private HashMap<String, String> variables = new HashMap<>();
+
+    public MiniScriptInterpreter(String username) {
+        variables.put("user", username); // Guardar nombre del usuario
+    }
+
+    private int evaluateExpression(String expression) {
+        try {
+            for (String var : variables.keySet()) {
+                expression = expression.replace(var, variables.get(var));
+            }
+            return (int) eval(expression);
+        } catch (Exception e) {
+            System.out.println("Error en la evaluación: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    private double eval(String expr) {
+        return new Object() {
+            int pos = -1, ch;
+
+            void nextChar() {
+                ch = (++pos < expr.length()) ? expr.charAt(pos) : -1;
+            }
+
+            boolean eat(int charToEat) {
+                while (ch == ' ') nextChar();
+                if (ch == charToEat) {
+                    nextChar();
+                    return true;
+                }
+                return false;
+            }
+
+            double parse() {
+                nextChar();
+                double x = parseExpression();
+                if (pos < expr.length()) throw new RuntimeException("Error inesperado: " + (char) ch);
+                return x;
+            }
+
+            double parseExpression() {
+                double x = parseTerm();
+                while (true) {
+                    if (eat('+')) x += parseTerm();
+                    else if (eat('-')) x -= parseTerm();
+                    else return x;
+                }
+            }
+
+            double parseTerm() {
+                double x = parseFactor();
+                while (true) {
+                    if (eat('*')) x *= parseFactor();
+                    else if (eat('/')) x /= parseFactor();
+                    else return x;
+                }
+            }
+
+            double parseFactor() {
+                if (eat('+')) return parseFactor();
+                if (eat('-')) return -parseFactor();
+
+                double x;
+                int startPos = this.pos;
+                if (eat('(')) {
+                    x = parseExpression();
+                    eat(')');
+                } else if ((ch >= '0' && ch <= '9') || ch == '.') {
+                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
+                    x = Double.parseDouble(expr.substring(startPos, this.pos));
+                } else {
+                    throw new RuntimeException("Error inesperado: " + (char) ch);
+                }
+                return x;
+            }
+        }.parse();
+    }
+
+    public void execute(String[] code) {
+        for (String line : code) {
+            line = line.trim();
+            if (line.contains("=")) {
+                String[] parts = line.split("=");
+                String var = parts[0].trim();
+                String expr = parts[1].trim();
+                variables.put(var, String.valueOf(evaluateExpression(expr)));
+            } else if (line.startsWith("print(") && line.endsWith(")")) {
+                String expr = line.substring(6, line.length() - 1);
+                System.out.println(variables.getOrDefault(expr, evaluateExpression(expr)));
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Ingresa tu nombre de usuario: ");
+        String username = scanner.nextLine();
+
+        MiniScriptInterpreter interpreter = new MiniScriptInterpreter(username);
+        String[] code = {
+            "x = 10 + 5",
+            "y = x * 2",
+            "print(y)",
+            "print(cb )"
+        };
+
+        interpreter.execute(code);
+        scanner.close();
+    }
+}
+x = 10 + 5
+y = x * 2
+print(y)
+print(cb) 
+
+import re
+
+class MiniScriptInterpreter:
+    def __init__(self):
+        self.variables = {"user": "LaOrtiz7"}  # Nombre de usuario fijo
+
+    def evaluate_expression(self, expression):
+        """Evalúa una expresión matemática con variables."""
+        try:
+            for var in self.variables:
+                expression = expression.replace(var, str(self.variables[var]))
+            return eval(expression)
+        except Exception as e:
+            return f"Error en la evaluación: {e}"
+
+    def execute(self, code):
+        """Ejecuta el código MiniScript línea por línea."""
+        lines = code.strip().split("\n")
+        for line in lines:
+            line = line.strip()
+            if "=" in line:
+                var, expr = line.split("=")
+                var, expr = var.strip(), expr.strip()
+                self.variables[var] = self.evaluate_expression(expr)
+            elif "print" in line:
+                expr = re.findall(r'print\((.*?)\)', line)
+                if expr:
+                    print(self.evaluate_expression(expr[0]))
+
+# Código MiniScript de prueba
+code = """
+x = 10 + 5
+y = x * 2
+print(y)
+print(user)
+"""
+
+# Ejecutar el intérprete con "LaOrtiz7"
+interpreter = MiniScriptInterpreter()
+interpreter.execute(code)
+import re
+
+class MiniScriptInterpreter:
+    def __init__(self):
+        self.variables = {"user": "LaOrtiz7"}  
+
+    def evaluate_expression(self, expression):
+        """Evalúa una expresión matemática con variables."""
+        try:
+            for var in self.variables:
+                expression = expression.replace(var, str(self.variables[var]))
+            return eval(expression, {}, self.variables)
+        except Exception as e:
+            return f"Error en la evaluación: {e}"
+
+    def execute(self, code):
+        """Ejecuta el código MiniScript línea por línea."""
+        lines = code.strip().split("\n")
+        functions = {}
+        inside_function = None
+        function_code = []
+
+        for line in lines:
+            line = line.strip()
+
+            if line.startswith("def "):
+                inside_function = line[4:-1]  
+                functions[inside_function] = []
+            elif inside_function:
+                if line == "end":
+                    inside_function = None
+                else:
+                    functions[inside_function].append(line)
+            elif line.startswith("if "):
+                condition = line[3:-1]
+                if not self.evaluate_expression(condition):
+                    while lines and not lines[0].strip().startswith("else") and not lines[0].strip().startswith("end"):
+                        lines.pop(0)
+            elif line.startswith("else"):
+                pass  
+            elif "=" in line:
+                var, expr = line.split("=")
+                var, expr = var.strip(), expr.strip()
+                if expr.startswith("input("):
+                    self.variables[var] = input(expr[6:-1] + " ")
+                else:
+                    self.variables[var] = self.evaluate_expression(expr)
+            elif "print" in line:
+                expr = re.findall(r'print\((.*?)\)', line)
+                if expr:
+                    print(self.evaluate_expression(expr[0]))
+            elif line in functions:
+                for func_line in functions[line]:
+                    self.execute(func_line)
+
+# Código MiniScript mejorado
+code = """
+name = input("Ingrese su nombre: CB713")
+print("Hola, " + CB713)
+x = 5
+if x > 3:
+    print("x es mayor a 3")
+else:
+    print("x es menor o igual a 3")
+def saludo():
+    print("Hola desde la función!")
+saludo()
+"""
+
+interpreter = MiniScriptInterpreter()
+interpreter.execute(code)
+package1.func1()
+      file1:20
+package2.func2()
+      file2:33 
+
+runtime error: index out of range
+    func1(I)
+System.out.println("Índice I: " + I);
+if (I < arr.length) {
+    // Acceder al arreglo
+} m
+    System.out.println("Índice fuera de rango");
+}
